@@ -19,6 +19,23 @@ def calculate(subject)
 	return all
 end
 
+def get_previous(filename)
+	# Gets the previously stored attendance details
+	tmp = ""
+	file=File.open(filename,'r') { |chars|
+		tmp="#{tmp}#{chars.read}"
+	}
+	# Has potential to slow things down if file size is too large
+	everything=	tmp.split("|")
+	len = everything.length
+	if len==0 
+		puts "No attendance previously stored"
+		return nil
+	end
+	puts everything[len-1]
+	return everything[len-1]
+end
+
 # Set up browser to LOGIN and Scrape Data
 browser = Watir::Browser.new
 browser = Watir::Browser.start("http://my-gurukul.com/login.aspx?BROWSERWINDOW=&BROWSER=FF&DF=MM/DD/YYYY&CF=MYGURUKUL")
@@ -42,7 +59,13 @@ subjects = content.split(";")
 # Display to Console
 prettify_display subjects
 
+# Display Previous Input
+previously=get_previous(login[1])
+if previously!=nil
+	prettify_display previously
+end
+
+File.open(login[0], 'a+') { |file| file.write(storage) }
 browser.close
-File.open("res.html", 'a') { |file| file.write(storage) }
 
 
