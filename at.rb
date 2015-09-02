@@ -32,8 +32,14 @@ def get_previous(filename)
 		puts "No attendance previously stored"
 		return nil
 	end
-	puts everything[len-1]
 	return everything[len-1]
+end
+
+def get_previous_date(previously)
+	previously= previously.split("@")
+	date_prev = previously[0]
+	previously = previously[1]
+	return date_prev
 end
 
 # Set up browser to LOGIN and Scrape Data
@@ -53,16 +59,19 @@ content.strip!
 
 # Prepare for Long term file storage purpose with time
 current_date = Date.today.to_s
-storage = "#{current_date}/\\#{content}|"
+storage = "#{current_date}@#{content}|"
 subjects = content.split(";")
 
 # Display to Console
 prettify_display subjects
 
 # Display Previous Input
-previously=get_previous(login[1])
+previously=get_previous(login[0])
 if previously!=nil
-	prettify_display previously
+	date = get_previous_date(previously)
+	previously = previously.split("@")
+	puts "\n-----------------\nPrevious Attendance : #{date}\n-----------------\n "
+	prettify_display previously[1].split(";")
 end
 
 File.open(login[0], 'a+') { |file| file.write(storage) }
